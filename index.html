@@ -1,46 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>History Your Way</title>
-
-    <!-- Link to CSS -->
-    <link rel="stylesheet" href="style.css" />
-
-    <!-- Load Three.js for 3D scene -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-  </head>
-
-  <body>
-  <div id="overlay">
-    <h1>History Your Way</h1>
-    <p>Rewrite the world. Live inside history.</p>
-    <button id="startBtn">Start Your History</button>
-  </div>
-
-  <div id="creator" class="hidden">
-    <h2>Create Your Ruler</h2>
-    <label>Name:</label>
-    <input type="text" id="rulerName" placeholder="Your ruler's name" />
-
-    <label>Nation:</label>
-    <input type="text" id="nationName" placeholder="Your nation's name" />
-
-    <label>Starting Era:</label>
-    <select id="eraSelect">
-      <option>Ancient</option>
-      <option>Medieval</option>
-      <option>Renaissance</option>
-      <option>Modern</option>
-    </select>
-
-    <button id="confirmBtn">Confirm</button>
-  </div>
-
-  <canvas id="bg"></canvas>
-
-  <script src="script.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>History: Your Way</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; }
+    canvas { display: block; }
+    #loading {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-family: sans-serif;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">Loading world...</div>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
 
