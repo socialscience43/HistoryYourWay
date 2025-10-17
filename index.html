@@ -13,17 +13,34 @@
   </head>
 
   <body>
-    <div id="overlay">
-      <h1>History Your Way</h1>
-      <p>Rewrite the world. Live inside history.</p>
-      <button id="startBtn">Start Your History</button>
-    </div>
+  <div id="overlay">
+    <h1>History Your Way</h1>
+    <p>Rewrite the world. Live inside history.</p>
+    <button id="startBtn">Start Your History</button>
+  </div>
 
-    <!-- 3D world container -->
-    <canvas id="bg"></canvas>
+  <div id="creator" class="hidden">
+    <h2>Create Your Ruler</h2>
+    <label>Name:</label>
+    <input type="text" id="rulerName" placeholder="Your ruler's name" />
 
-    <!-- Link to JS -->
-    <script src="script.js"></script>
-  </body>
+    <label>Nation:</label>
+    <input type="text" id="nationName" placeholder="Your nation's name" />
+
+    <label>Starting Era:</label>
+    <select id="eraSelect">
+      <option>Ancient</option>
+      <option>Medieval</option>
+      <option>Renaissance</option>
+      <option>Modern</option>
+    </select>
+
+    <button id="confirmBtn">Confirm</button>
+  </div>
+
+  <canvas id="bg"></canvas>
+
+  <script src="script.js"></script>
+</body>
 </html>
 
