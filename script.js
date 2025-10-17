@@ -37,3 +37,33 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+const startBtn = document.getElementById("startBtn");
+const overlay = document.getElementById("overlay");
+const creator = document.getElementById("creator");
+const confirmBtn = document.getElementById("confirmBtn");
+
+startBtn.addEventListener("click", () => {
+  overlay.style.display = "none";
+  creator.classList.remove("hidden");
+});
+
+confirmBtn.addEventListener("click", () => {
+  const rulerName = document.getElementById("rulerName").value;
+  const nationName = document.getElementById("nationName").value;
+  const era = document.getElementById("eraSelect").value;
+
+  creator.style.display = "none";
+
+  const banner = document.createElement("div");
+  banner.innerHTML = `<h2>Welcome, ${rulerName} of ${nationName} (${era} Era)</h2>`;
+  banner.style.position = "absolute";
+  banner.style.top = "20px";
+  banner.style.left = "50%";
+  banner.style.transform = "translateX(-50%)";
+  banner.style.background = "rgba(0,0,0,0.7)";
+  banner.style.padding = "15px 25px";
+  banner.style.borderRadius = "10px";
+  banner.style.zIndex = "10";
+  document.body.appendChild(banner);
+});
+
