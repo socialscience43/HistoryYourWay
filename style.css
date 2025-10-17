@@ -48,4 +48,35 @@ canvas {
   top: 0;
   left: 0;
 }
- 
+
+.hidden {
+  display: none;
+}
+
+#creator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.85);
+  padding: 30px;
+  border-radius: 20px;
+  z-index: 10;
+  width: 300px;
+  text-align: left;
+}
+
+#creator input, #creator select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+#creator button {
+  background: #00a86b;
+  width: 100%;
+}
+
