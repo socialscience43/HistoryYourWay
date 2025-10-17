@@ -1,1 +1,2 @@
-alert("JavaScript connected!");
+console.log("Script running!");
+document.getElementById("loading").innerText = "JS loaded...";
