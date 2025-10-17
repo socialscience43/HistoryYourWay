@@ -1,69 +1,65 @@
-// Basic 3D Scene using Three.js
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+import { PointerLockControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/PointerLockControls.js";
+
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg') });
+scene.background = new THREE.Color(0x87ceeb);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.z = 5;
+document.body.appendChild(renderer.domElement);
 
-// Simple rotating cube placeholder for "the world"
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshStandardMaterial({ color: 0x007bff });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
-const light = new THREE.PointLight(0xffffff, 1);
+const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(10, 10, 10);
 scene.add(light);
 
-// Animation loop
+const groundGeo = new THREE.PlaneGeometry(200, 200);
+const groundMat = new THREE.MeshPhongMaterial({ color: 0x228b22 });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+scene.add(ground);
+
+const controls = new PointerLockControls(camera, document.body);
+document.addEventListener("click", () => controls.lock());
+
+const move = { forward: 0, backward: 0, left: 0, right: 0 };
+document.addEventListener("keydown", e => {
+  if (e.code === "KeyW") move.forward = 1;
+  if (e.code === "KeyS") move.backward = 1;
+  if (e.code === "KeyA") move.left = 1;
+  if (e.code === "KeyD") move.right = 1;
+});
+document.addEventListener("keyup", e => {
+  if (e.code === "KeyW") move.forward = 0;
+  if (e.code === "KeyS") move.backward = 0;
+  if (e.code === "KeyA") move.left = 0;
+  if (e.code === "KeyD") move.right = 0;
+});
+
+const velocity = new THREE.Vector3();
+const speed = 0.1;
+camera.position.y = 2;
+
+document.getElementById("loading").style.display = "none";
+
 function animate() {
   requestAnimationFrame(animate);
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+
+  if (controls.isLocked) {
+    velocity.z = (move.backward - move.forward) * speed;
+    velocity.x = (move.right - move.left) * speed;
+
+    controls.moveRight(velocity.x);
+    controls.moveForward(velocity.z);
+  }
+
   renderer.render(scene, camera);
 }
 animate();
 
-// Button behavior
-document.getElementById("startBtn").addEventListener("click", () => {
-  document.getElementById("overlay").style.display = "none";
-  // later you’ll load your world here
-});
-
-// Handle window resize
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-const startBtn = document.getElementById("startBtn");
-const overlay = document.getElementById("overlay");
-const creator = document.getElementById("creator");
-const confirmBtn = document.getElementById("confirmBtn");
-
-startBtn.addEventListener("click", () => {
-  overlay.style.display = "none";
-  creator.classList.remove("hidden");
-});
-
-confirmBtn.addEventListener("click", () => {
-  const rulerName = document.getElementById("rulerName").value;
-  const nationName = document.getElementById("nationName").value;
-  const era = document.getElementById("eraSelect").value;
-
-  creator.style.display = "none";
-
-  const banner = document.createElement("div");
-  banner.innerHTML = `<h2>Welcome, ${rulerName} of ${nationName} (${era} Era)</h2>`;
-  banner.style.position = "absolute";
-  banner.style.top = "20px";
-  banner.style.left = "50%";
-  banner.style.transform = "translateX(-50%)";
-  banner.style.background = "rgba(0,0,0,0.7)";
-  banner.style.padding = "15px 25px";
-  banner.style.borderRadius = "10px";
-  banner.style.zIndex = "10";
-  document.body.appendChild(banner);
 });
 
