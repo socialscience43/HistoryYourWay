@@ -1,232 +1,29 @@
-# Writing the existing HTML prototype to a file so you can download it.
-html_content = """<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>History Your Way — Prototype</title>
-  <meta name="description" content="A lightweight prototype for 'History Your Way' — craft alternate histories, edit events, and run simulations." />
-  <style>
-    :root{
-      --bg:#0f1724; --card:#0b1220; --accent:#7c3aed; --muted:#9aa4b2; --glass: rgba(255,255,255,0.03);
-      --radius:14px; font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;background:linear-gradient(180deg,var(--bg),#071025);color:#e6eef6;display:flex;align-items:center;justify-content:center;padding:28px}
-    .wrap{max-width:1100px;width:100%;display:grid;grid-template-columns:340px 1fr;gap:20px}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>History Your Way</title>
 
-    .panel{background:linear-gradient(180deg,var(--card),rgba(7,12,20,0.8));padding:18px;border-radius:var(--radius);box-shadow:0 6px 30px rgba(2,6,23,0.6);}
-    header{display:flex;align-items:center;gap:12px}
-    .logo{width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#0ea5a4);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
-    h1{margin:0;font-size:20px}
-    p.lead{color:var(--muted);margin:8px 0 12px}
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="style.css" />
 
-    .controls{display:flex;flex-direction:column;gap:10px}
-    button{background:var(--accent);border:0;padding:10px 12px;border-radius:10px;color:white;font-weight:600;cursor:pointer}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    <!-- Load Three.js for 3D scene -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  </head>
 
-    label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
-    input[type=text], textarea, select{width:100%;padding:10px;border-radius:8px;border:0;background:var(--glass);color:inherit;font-size:14px}
-    textarea{min-height:120px;resize:vertical}
+  <body>
+    <div id="overlay">
+      <h1>History Your Way</h1>
+      <p>Rewrite the world. Live inside history.</p>
+      <button id="startBtn">Start Your History</button>
+    </div>
 
-    .events{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-    .event{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:10px;border-radius:10px;display:flex;gap:8px;align-items:flex-start}
-    .event h3{margin:0;font-size:14px}
-    .muted{color:var(--muted);font-size:13px}
+    <!-- 3D world container -->
+    <canvas id="bg"></canvas>
 
-    main .sim{height:100%;display:flex;flex-direction:column;gap:12px}
-    .stage{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:12px;min-height:220px}
-    .timeline{max-height:260px;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:8px}
-
-    footer{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
-    .small{font-size:12px;color:var(--muted)}
-
-    @media (max-width:900px){.wrap{grid-template-columns:1fr;max-width:720px}}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <aside class="panel">
-      <header>
-        <div class="logo">HYW</div>
-        <div>
-          <h1>History Your Way</h1>
-          <p class="lead">Prototype — rewrite moments, change outcomes, simulate ripple effects.</p>
-        </div>
-      </header>
-
-      <div class="controls">
-        <div>
-          <label for="scenario">Scenario name</label>
-          <input id="scenario" type="text" placeholder="Ex: The Lost Union — 1864" />
-        </div>
-
-        <div>
-          <label for="desc">Short description</label>
-          <input id="desc" type="text" placeholder="One-sentence summary of the alternate history" />
-        </div>
-
-        <div>
-          <label for="seed">Simulation seed (optional)</label>
-          <input id="seed" type="text" placeholder="random or 42" />
-        </div>
-
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <button id="startBtn">Start simulation</button>
-          <button class="btn-ghost" id="resetBtn">Reset</button>
-        </div>
-
-        <div class="events" id="events">
-          <!-- auto-populated events -->
-        </div>
-
-        <div style="margin-top:12px;display:flex;gap:8px">
-          <button id="saveBtn" class="btn-ghost">Save</button>
-          <button id="exportBtn" class="btn-ghost">Export JSON</button>
-        </div>
-
-      </div>
-    </aside>
-
-    <main class="panel sim">
-      <section class="stage">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <h2 id="scenarioTitle">No scenario loaded</h2>
-            <div class="muted" id="scenarioSub">Create or load a scenario to begin.</div>
-          </div>
-          <div class="small muted">v0.1 • Prototype</div>
-        </div>
-
-        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0">
-
-        <div class="timeline" id="timeline">
-          <!-- timeline items -->
-        </div>
-
-      </section>
-
-      <footer>
-        <div>
-          <label for="eventText">Add / edit event</label>
-          <input id="eventText" type="text" placeholder="June 1, 1914 — Archduke survives the assassination" />
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button id="addEvent">Add event</button>
-          <button id="undo" class="btn-ghost">Undo</button>
-        </div>
-      </footer>
-    </main>
-  </div>
-
-  <script>
-    // Simple prototype logic. Expand as you like.
-    const startBtn = document.getElementById('startBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const exportBtn = document.getElementById('exportBtn');
-    const addEventBtn = document.getElementById('addEvent');
-    const undoBtn = document.getElementById('undo');
-
-    const eventsContainer = document.getElementById('events');
-    const timeline = document.getElementById('timeline');
-    const scenarioTitle = document.getElementById('scenarioTitle');
-    const scenarioSub = document.getElementById('scenarioSub');
-
-    let state = {name:'',desc:'',seed:null,events:[]};
-    let historyStack = [];
-
-    function renderEvents(){
-      eventsContainer.innerHTML = '';
-      state.events.forEach((ev, i)=>{
-        const el = document.createElement('div'); el.className='event';
-        el.innerHTML = `<div style="flex:1"><h3>${escapeHtml(ev.title)}</h3><div class="muted">${escapeHtml(ev.note||'')}</div></div><div style="display:flex;flex-direction:column;gap:6px"><button class="btn-ghost" data-i="${i}">Edit</button><button class="btn-ghost" data-del="${i}">Delete</button></div>`;
-        eventsContainer.appendChild(el);
-      })
-    }
-
-    function renderTimeline(){
-      timeline.innerHTML = '';
-      if(state.events.length===0){ timeline.innerHTML='<div class="muted">No events yet — add the first turning point.</div>'; return }
-      state.events.forEach((ev,i)=>{
-        const item = document.createElement('div'); item.className='event';
-        item.innerHTML = `<div style="flex:1"><h3>${escapeHtml(ev.title)}</h3><div class="muted">impact: ${escapeHtml(ev.impact||'unknown')}</div><div style="margin-top:6px" class="muted">${escapeHtml(ev.note||'')}</div></div><div class="muted">#${i+1}</div>`;
-        timeline.appendChild(item);
-      })
-    }
-
-    function pushHistory(){ historyStack.push(JSON.parse(JSON.stringify(state))); if(historyStack.length>50) historyStack.shift(); }
-    function undo(){ if(historyStack.length===0) return; state = historyStack.pop(); renderAll(); }
-
-    function renderAll(){ document.getElementById('scenario').value = state.name; document.getElementById('desc').value = state.desc; document.getElementById('seed').value = state.seed||''; scenarioTitle.textContent = state.name||'No scenario loaded'; scenarioSub.textContent = state.desc||'Create or load a scenario to begin.'; renderEvents(); renderTimeline(); }
-
-    // basic event add / edit / delete
-    addEventBtn.addEventListener('click', ()=>{
-      const text = document.getElementById('eventText').value.trim(); if(!text) return;
-      pushHistory(); state.events.push({title:text,note:'',impact:'medium'}); document.getElementById('eventText').value=''; renderAll();
-    })
-
-    eventsContainer.addEventListener('click', (e)=>{
-      const del = e.target.getAttribute('data-del');
-      const idx = e.target.getAttribute('data-i');
-      if(del!==null){ pushHistory(); state.events.splice(parseInt(del,10),1); renderAll(); }
-      if(idx!==null){ const ev=state.events[parseInt(idx,10)]; const newTitle = prompt('Edit event title', ev.title); if(newTitle!==null){ pushHistory(); ev.title=newTitle; renderAll(); } }
-    })
-
-    undoBtn.addEventListener('click', ()=>undo());
-
-    startBtn.addEventListener('click', ()=>{
-      // lightweight deterministic shuffle based on seed
-      pushHistory(); state.name = document.getElementById('scenario').value.trim() || state.name || 'Untitled scenario';
-      state.desc = document.getElementById('desc').value.trim() || state.desc;
-      const seed = document.getElementById('seed').value.trim(); state.seed = seed || state.seed || Math.random().toString(36).slice(2,8);
-
-      // simple "simulation": attach simulated outcomes to events
-      state.events = state.events.map((ev, i)=>{
-        const r = pseudoRand(state.seed + '|' + i);
-        const outcome = r > 0.6 ? 'major shift' : r > 0.3 ? 'minor shift' : 'no immediate change';
-        return {...ev, impact:outcome, simulatedAt: new Date().toISOString()}
-      })
-      renderAll();
-    })
-
-    resetBtn.addEventListener('click', ()=>{ if(confirm('Reset scenario? This cannot be undone.')){ pushHistory(); state = {name:'',desc:'',seed:null,events:[]}; renderAll(); } })
-
-    saveBtn.addEventListener('click', ()=>{
-      const key = `hyw:${state.name||'untitled'}`;
-      localStorage.setItem(key, JSON.stringify(state)); alert('Saved to localStorage as '+key);
-    })
-
-    exportBtn.addEventListener('click', ()=>{
-      const data = JSON.stringify(state,null,2);
-      const blob = new Blob([data],{type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download = (state.name||'scenario') + '.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    })
-
-    // small utilities
-    function pseudoRand(str){
-      // xorshift-ish hash -> deterministic number 0..1
-      let h=2166136261;
-      for(let i=0;i<str.length;i++) h = Math.imul(h^str.charCodeAt(i),16777619);
-      h += h<<13; h ^= h>>>7; h += h<<3; h ^= h>>>17; h += h<<5;
-      const x = (h >>> 0) / 4294967295;
-      return x;
-    }
-    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-    // initial render
-    renderAll();
-  </script>
-</body>
+    <!-- Link to JS -->
+    <script src="script.js"></script>
+  </body>
 </html>
-"""
-
-file_path = "/mnt/data/history-your-way-index.html"
-with open(file_path, "w", encoding="utf-8") as f:
-    f.write(html_content)
-
-# Show the file path for the user to download
-file_path
 
